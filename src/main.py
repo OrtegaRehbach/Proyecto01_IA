@@ -1,6 +1,6 @@
+import time
 import matplotlib.pyplot as plt
 import numpy as np
-from collections import deque
 
 from maze_file_reader import MazeFileReader
 from search_algorithms import bfs_path, dfs_path, dls_path, a_star_path, greedy_best_first_search
@@ -102,7 +102,9 @@ def main():
             chosen_heuristic = run_search_algorithm(choice, test_maze, start, end, None)
             continue
 
+        start_time = time.time()  # Measure start time
         path = run_search_algorithm(choice, test_maze, start, end, chosen_heuristic)
+        end_time = time.time()  # Measure end time
 
         if path:
             print("Path:", path)
@@ -112,7 +114,10 @@ def main():
                     test_maze[step_i][step_j] = k
             test_maze[start[0]][start[1]] = 10
             test_maze[end[0]][end[1]] = 50
-            print_matrix(test_maze)
+            # Calculate and print elapsed time
+            elapsed_time = end_time - start_time
+            print("Elapsed time:", elapsed_time, "seconds")
+            # print_matrix(test_maze)
             np_array = np.array(test_maze)
             plt.matshow(np_array)
             plt.xticks([]) # remove the tick marks by setting to an empty list
