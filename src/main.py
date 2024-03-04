@@ -6,19 +6,26 @@ from maze_file_reader import MazeFileReader
 from search_algorithms import bfs_path, dfs_path, dls_path, a_star_path, greedy_best_first_search
 from heuristics import euclidean_distance, manhattan_distance
 
+MENU_DIVIDER = "-" * 64
 WALL = 1
 PATH = 0
 START = 2
 END = 3
 
-def print_menu():
+def print_menu(maze_file_name, chosen_heuristic):
+    print(MENU_DIVIDER)
+    print("Reading maze from:", maze_file_name)
+    print("Current heuristic function:", chosen_heuristic.__name__ if callable(chosen_heuristic) else "None")
+    print(MENU_DIVIDER)
     print("Choose a search algorithm:")
     print("1. Breadth-First Search (BFS)")
     print("2. Depth-First Search (DFS)")
     print("3. Depth-Limited Search (DLS)")
     print("4. A* Search")
     print("5. Greedy Best-First Search")
-    print("6. Exit")
+    print("6. Choose heuristic function for informed search algorithms")
+    print("7. Exit")
+    print(MENU_DIVIDER)
 
 def print_matrix(matrix):
     for i in range(len(matrix)):
@@ -26,19 +33,34 @@ def print_matrix(matrix):
             print(str(matrix[i][j]).ljust(2), end=' ')
         print()
 
-def run_search_algorithm(algorithm, maze, start, end):
+def run_search_algorithm(algorithm, maze, start, end, chosen_heuristic):
     if algorithm == 1:
         return bfs_path(maze, start, end)
     elif algorithm == 2:
         return dfs_path(maze, start, end)
     elif algorithm == 3:
         depth_limit = int(input("Enter depth limit for DLS: "))
+        print(MENU_DIVIDER)
         return dls_path(maze, start, end, depth_limit)
     elif algorithm == 4:
-        return a_star_path(maze, start, end, heuristic_func=euclidean_distance)
+        return a_star_path(maze, start, end, heuristic_func=chosen_heuristic)
     elif algorithm == 5:
-        return greedy_best_first_search(maze, start, end, heuristic_func=euclidean_distance)
+        return greedy_best_first_search(maze, start, end, heuristic_func=chosen_heuristic)
     elif algorithm == 6:
+        print("Choose a heuristic function:")
+        print(MENU_DIVIDER)
+        print("1. Euclidean Distance")
+        print("2. Manhattan Distance")
+        choice = int(input("Enter your choice: "))
+        print(MENU_DIVIDER)
+        if choice == 1:
+            return euclidean_distance
+        elif choice == 2:
+            return manhattan_distance
+        else:
+            print("Invalid choice")
+            return None
+    elif algorithm == 7:
         print("Exiting...")
         return None
     else:
@@ -67,14 +89,20 @@ def main():
     test_maze[start[0]][start[1]] = 0
     test_maze[end[0]][end[1]] = 0
 
+    chosen_heuristic = euclidean_distance  # Default heuristic function
+
     while True:
-        print_menu()
+        print_menu(maze_file_name, chosen_heuristic)
         choice = int(input("Enter your choice: "))
+        print(MENU_DIVIDER)
 
-        if choice == 6:
+        if choice == 7:
             break
+        elif choice == 6:
+            chosen_heuristic = run_search_algorithm(choice, test_maze, start, end, None)
+            continue
 
-        path = run_search_algorithm(choice, test_maze, start, end)
+        path = run_search_algorithm(choice, test_maze, start, end, chosen_heuristic)
 
         if path:
             print("Path:", path)
