@@ -3,6 +3,7 @@ import numpy as np
 from collections import deque
 
 from maze_file_reader import MazeFileReader
+from search_algorithms import bfs_path, dfs_path, dls_path, a_star_path, greedy_best_first_search
 from heuristics import euclidean_distance, manhattan_distance
 
 WALL = 1
@@ -10,206 +11,82 @@ PATH = 0
 START = 2
 END = 3
 
-test_maze = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 2, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 1, 1, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 1, 1],
-    [1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
-    [1, 0, 1, 0, 0, 0, 1, 0, 1, 1],
-    [1, 0, 0, 1, 0, 1, 1, 0, 3, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
-reader = MazeFileReader("./res/test_maze.txt")
-test_maze = reader.get_maze()
-
-start = None
-end = None
-for i in range(len(test_maze)):
-    for j in range(len(test_maze[i])):
-        if test_maze[i][j] == START:
-            start = (i, j)
-        if test_maze[i][j] == END:
-            end = (i, j)
-test_maze[start[0]][start[1]] = 0
-test_maze[end[0]][end[1]] = 0
-
-def bfs_path(start: tuple, end: tuple):
-    queue = [(start, [start])]
-    visited = set()
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    while queue:
-        current_node, path = queue.pop(0)
-        if current_node not in visited:
-            visited.add(current_node)
-            
-        if current_node == end:
-            return path
-        
-        neighbors = []
-        for direction in directions:
-            temp_i = current_node[0] + direction[0]
-            temp_j = current_node[1] + direction[1]
-            if temp_i < 0 or temp_i > len(test_maze) - 1 or temp_j < 0 or temp_j > len(test_maze[temp_i]) - 1:
-                continue
-            if test_maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
-                neighbors.append((temp_i, temp_j))
-        
-        for neighbor in neighbors:
-            if neighbor not in visited:
-                queue.append((neighbor, path + [neighbor]))
-    return None
-
-def dfs_path(start: tuple, end: tuple):
-    stack = [(start, [start])]
-    visited = set()
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    while stack:
-        current_node, path = stack.pop()
-        if current_node not in visited:
-            visited.add(current_node)
-            
-        if current_node == end:
-            return path
-        
-        neighbors = []
-        for direction in directions:
-            temp_i = current_node[0] + direction[0]
-            temp_j = current_node[1] + direction[1]
-            if temp_i < 0 or temp_i > len(test_maze) - 1 or temp_j < 0 or temp_j > len(test_maze[temp_i]) - 1:
-                continue
-            if test_maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
-                neighbors.append((temp_i, temp_j))
-        
-        for neighbor in neighbors:
-            if neighbor not in visited:
-                stack.append((neighbor, path + [neighbor]))
-    return None
-
-def dls_path(start: tuple, end: tuple, depth_limit: int = 100):
-    stack = [(start, [start], 0)]
-    visited = set()
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    while stack:
-        current_node, path, depth = stack.pop()
-        if current_node not in visited:
-            visited.add(current_node)
-            
-        if current_node == end:
-            return path
-        
-        if depth < depth_limit:
-            neighbors = []
-            for direction in directions:
-                temp_i = current_node[0] + direction[0]
-                temp_j = current_node[1] + direction[1]
-                if temp_i < 0 or temp_i > len(test_maze) - 1 or temp_j < 0 or temp_j > len(test_maze[temp_i]) - 1:
-                    continue
-                if test_maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
-                    neighbors.append((temp_i, temp_j))
-            
-            for neighbor in neighbors:
-                if neighbor not in visited:
-                    stack.append((neighbor, path + [neighbor], depth + 1))
-        else:
-            print("Depth limit reached.")
-            return None
-    return None
-
-def a_star_path(start: tuple, end: tuple, heuristic_func=None):
-    if heuristic_func is None:
-        heuristic_func = euclidean_distance  # Default heuristic function
-
-    def heuristic_cost(node):
-        return heuristic_func(node, end)
-
-    queue = deque([(start, [start], 0)])
-    visited = set()
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    while queue:
-        current_node, path, cost = queue.popleft()
-        if current_node not in visited:
-            visited.add(current_node)
-            
-        if current_node == end:
-            return path
-        
-        neighbors = []
-        for direction in directions:
-            temp_i = current_node[0] + direction[0]
-            temp_j = current_node[1] + direction[1]
-            if temp_i < 0 or temp_i > len(test_maze) - 1 or temp_j < 0 or temp_j > len(test_maze[temp_i]) - 1:
-                continue
-            if test_maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
-                neighbors.append((temp_i, temp_j))
-        
-        for neighbor in neighbors:
-            if neighbor not in visited:
-                new_cost = cost + 1  # Assuming each step has a cost of 1
-                heuristic = heuristic_cost(neighbor)  # Calculate heuristic cost for the neighbor
-                queue.append((neighbor, path + [neighbor], new_cost + heuristic))  # Add heuristic to total cost
-                # Sort the queue based on the total cost
-                queue = deque(sorted(queue, key=lambda x: x[2]))
-    return None
-
-def greedy_best_first_search(start: tuple, end: tuple, heuristic_func=None):
-    if heuristic_func is None:
-        heuristic_func = euclidean_distance  # Default heuristic function
-
-    def heuristic_cost(node):
-        return heuristic_func(node, end)
-
-    queue = deque([(start, [start], heuristic_cost(start))])
-    visited = set()
-    directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    while queue:
-        current_node, path, current_heuristic = queue.popleft()
-        if current_node not in visited:
-            visited.add(current_node)
-            
-        if current_node == end:
-            return path
-        
-        neighbors = []
-        for direction in directions:
-            temp_i = current_node[0] + direction[0]
-            temp_j = current_node[1] + direction[1]
-            if temp_i < 0 or temp_i > len(test_maze) - 1 or temp_j < 0 or temp_j > len(test_maze[temp_i]) - 1:
-                continue
-            if test_maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
-                neighbors.append((temp_i, temp_j))
-        
-        for neighbor in neighbors:
-            if neighbor not in visited:
-                heuristic = heuristic_cost(neighbor)  # Calculate heuristic cost for the neighbor
-                queue.append((neighbor, path + [neighbor], heuristic))  # Add heuristic cost to the queue
-                # Sort the queue based on the heuristic cost
-                queue = deque(sorted(queue, key=lambda x: x[2]))
-    return None
+def print_menu():
+    print("Choose a search algorithm:")
+    print("1. Breadth-First Search (BFS)")
+    print("2. Depth-First Search (DFS)")
+    print("3. Depth-Limited Search (DLS)")
+    print("4. A* Search")
+    print("5. Greedy Best-First Search")
+    print("6. Exit")
 
 def print_matrix(matrix):
     for i in range(len(matrix)):
         for j in range(len(matrix[i])):
-            print( str(matrix[i][j]).ljust(2),end=' ')
+            print(str(matrix[i][j]).ljust(2), end=' ')
         print()
 
-path = dls_path(start, end)
-# path = a_star_path(start, end, heuristic_func=euclidean_distance)
-# path = greedy_best_first_search(start, end, heuristic_func=euclidean_distance)
-print("Path:", path)
+def run_search_algorithm(algorithm, maze, start, end):
+    if algorithm == 1:
+        return bfs_path(maze, start, end)
+    elif algorithm == 2:
+        return dfs_path(maze, start, end)
+    elif algorithm == 3:
+        depth_limit = int(input("Enter depth limit for DLS: "))
+        return dls_path(maze, start, end, depth_limit)
+    elif algorithm == 4:
+        return a_star_path(maze, start, end, heuristic_func=euclidean_distance)
+    elif algorithm == 5:
+        return greedy_best_first_search(maze, start, end, heuristic_func=euclidean_distance)
+    elif algorithm == 6:
+        print("Exiting...")
+        return None
+    else:
+        print("Invalid choice")
+        return None
 
-if path:
-    k = 1
-    for step_i, step_j in path:
-        if test_maze[step_i][step_j] == PATH:
-            test_maze[step_i][step_j] = k
-            k += 1
+def main():
+    maze_file_name = "simple_test_maze.txt"
+    reader = MazeFileReader(f"./res/{maze_file_name}")
+    test_maze = reader.get_maze()
 
-print_matrix(test_maze)
-    
-np_array = np.array(test_maze)
-plt.matshow(np_array)
-plt.show()
+    start = None
+    end = None
+    for i in range(len(test_maze)):
+        for j in range(len(test_maze[i])):
+            if test_maze[i][j] == START:
+                start = (i, j)
+            if test_maze[i][j] == END:
+                end = (i, j)
+    if not start:
+        print(f"Maze in '{maze_file_name}' does not specify a starting position.")
+    if not end:
+        print(f"Maze in '{maze_file_name}' does not specify an ending position.")
+    if not start or not end:
+        return
+    test_maze[start[0]][start[1]] = 0
+    test_maze[end[0]][end[1]] = 0
+
+    while True:
+        print_menu()
+        choice = int(input("Enter your choice: "))
+
+        if choice == 6:
+            break
+
+        path = run_search_algorithm(choice, test_maze, start, end)
+
+        if path:
+            print("Path:", path)
+            k = 1
+            for step_i, step_j in path:
+                if test_maze[step_i][step_j] == PATH:
+                    test_maze[step_i][step_j] = k
+                    k += 1
+            print_matrix(test_maze)
+            np_array = np.array(test_maze)
+            plt.matshow(np_array)
+            plt.show()
+
+if __name__ == "__main__":
+    main()
