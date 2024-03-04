@@ -106,14 +106,17 @@ def main():
 
         if path:
             print("Path:", path)
-            k = 1
+            k = 20
             for step_i, step_j in path:
                 if test_maze[step_i][step_j] == PATH:
                     test_maze[step_i][step_j] = k
-                    k += 1
+            test_maze[start[0]][start[1]] = 10
+            test_maze[end[0]][end[1]] = 50
             print_matrix(test_maze)
             np_array = np.array(test_maze)
             plt.matshow(np_array)
+            plt.xticks([]) # remove the tick marks by setting to an empty list
+            plt.yticks([]) # remove the tick marks by setting to an empty list
             plt.show()
 
 if __name__ == "__main__":
