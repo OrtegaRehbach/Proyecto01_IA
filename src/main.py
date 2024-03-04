@@ -102,10 +102,9 @@ def main():
             chosen_heuristic = run_search_algorithm(choice, test_maze, start, end, None)
             continue
 
-        start_time = time.time()  # Measure start time
-        path = run_search_algorithm(choice, test_maze, start, end, chosen_heuristic)
-        end_time = time.time()  # Measure end time
-
+        start_time = time.perf_counter()  # Measure start time
+        end_time = time.perf_counter()  # Measure end time
+        
         if path:
             print("Path:", path)
             k = 20
@@ -116,7 +115,7 @@ def main():
             test_maze[end[0]][end[1]] = 50
             # Calculate and print elapsed time
             elapsed_time = end_time - start_time
-            print("Elapsed time:", elapsed_time, "seconds")
+            print("Elapsed time:", elapsed_time * 1000, "milliseconds")            
             # print_matrix(test_maze)
             np_array = np.array(test_maze)
             plt.matshow(np_array)
