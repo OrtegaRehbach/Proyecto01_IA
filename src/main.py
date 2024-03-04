@@ -68,7 +68,7 @@ def run_search_algorithm(algorithm, maze, start, end, chosen_heuristic):
         return None
 
 def main():
-    maze_file_name = "simple_test_maze.txt"
+    maze_file_name = "test_maze.txt"
     reader = MazeFileReader(f"./res/{maze_file_name}")
     test_maze = reader.get_maze()
 
@@ -108,6 +108,7 @@ def main():
         
         if path:
             print("Path:", path)
+            print("Path lenght:", len(path))
             print("Iterations:", iterations)
             k = 20
             for step_i, step_j in path:
