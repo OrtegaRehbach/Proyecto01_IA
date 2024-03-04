@@ -7,13 +7,15 @@ def bfs_path(maze, start: tuple, end: tuple):
     queue = deque([(start, [start])])
     visited = set()
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    iterations = 0
     while queue:
         current_node, path = queue.popleft()
         if current_node not in visited:
             visited.add(current_node)
+            iterations += 1
             
         if current_node == end:
-            return path
+            return path, iterations
         
         neighbors = []
         for direction in directions:
@@ -25,19 +27,21 @@ def bfs_path(maze, start: tuple, end: tuple):
         for neighbor in neighbors:
             if neighbor not in visited:
                 queue.append((neighbor, path + [neighbor]))
-    return None
+    return None, iterations
 
 def dfs_path(maze, start: tuple, end: tuple):
     stack = [(start, [start])]
     visited = set()
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    iterations = 0
     while stack:
         current_node, path = stack.pop()
         if current_node not in visited:
             visited.add(current_node)
+            iterations += 1
             
         if current_node == end:
-            return path
+            return path, iterations
         
         neighbors = []
         for direction in directions:
@@ -49,19 +53,21 @@ def dfs_path(maze, start: tuple, end: tuple):
         for neighbor in neighbors:
             if neighbor not in visited:
                 stack.append((neighbor, path + [neighbor]))
-    return None
+    return None, iterations
 
 def dls_path(maze, start: tuple, end: tuple, depth_limit: int = 100):
     stack = [(start, [start], 0)]
     visited = set()
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    iterations = 0
     while stack:
         current_node, path, depth = stack.pop()
         if current_node not in visited:
             visited.add(current_node)
+            iterations += 1
             
         if current_node == end:
-            return path
+            return path, iterations
         
         if depth < depth_limit:
             neighbors = []
@@ -76,8 +82,8 @@ def dls_path(maze, start: tuple, end: tuple, depth_limit: int = 100):
                     stack.append((neighbor, path + [neighbor], depth + 1))
         else:
             print("Depth limit reached.")
-            return None
-    return None
+            return None, iterations
+    return None, iterations
 
 def a_star_path(maze, start: tuple, end: tuple, heuristic_func=None):
     if heuristic_func is None:
@@ -89,13 +95,15 @@ def a_star_path(maze, start: tuple, end: tuple, heuristic_func=None):
     queue = deque([(start, [start], 0)])
     visited = set()
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    iterations = 0
     while queue:
         current_node, path, cost = queue.popleft()
         if current_node not in visited:
             visited.add(current_node)
+            iterations += 1
             
         if current_node == end:
-            return path
+            return path, iterations
         
         neighbors = []
         for direction in directions:
@@ -111,7 +119,7 @@ def a_star_path(maze, start: tuple, end: tuple, heuristic_func=None):
                 queue.append((neighbor, path + [neighbor], new_cost + heuristic))  # Add heuristic to total cost
                 # Sort the queue based on the total cost
                 queue = deque(sorted(queue, key=lambda x: x[2]))
-    return None
+    return None, iterations
 
 def greedy_best_first_search(maze, start: tuple, end: tuple, heuristic_func=None):
     if heuristic_func is None:
@@ -123,13 +131,15 @@ def greedy_best_first_search(maze, start: tuple, end: tuple, heuristic_func=None
     queue = deque([(start, [start], heuristic_cost(start))])
     visited = set()
     directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    iterations = 0
     while queue:
         current_node, path, current_heuristic = queue.popleft()
         if current_node not in visited:
             visited.add(current_node)
+            iterations += 1
             
         if current_node == end:
-            return path
+            return path, iterations
         
         neighbors = []
         for direction in directions:
@@ -144,4 +154,4 @@ def greedy_best_first_search(maze, start: tuple, end: tuple, heuristic_func=None
                 queue.append((neighbor, path + [neighbor], heuristic))  # Add heuristic cost to the queue
                 # Sort the queue based on the heuristic cost
                 queue = deque(sorted(queue, key=lambda x: x[2]))
-    return None
+    return None, iterations
