@@ -103,10 +103,12 @@ def main():
             continue
 
         start_time = time.perf_counter()  # Measure start time
+        path, iterations = run_search_algorithm(choice, test_maze, start, end, chosen_heuristic)
         end_time = time.perf_counter()  # Measure end time
         
         if path:
             print("Path:", path)
+            print("Iterations:", iterations)
             k = 20
             for step_i, step_j in path:
                 if test_maze[step_i][step_j] == PATH:
