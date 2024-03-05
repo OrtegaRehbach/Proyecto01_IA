@@ -1,7 +1,6 @@
 from collections import deque
+from globals import *
 from heuristics import euclidean_distance
-
-WALL = 1
 
 def bfs_path(maze, start: tuple, end: tuple):
     queue = deque([(start, [start])])

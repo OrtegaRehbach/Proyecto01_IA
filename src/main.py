@@ -2,15 +2,12 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+from globals import *
 from maze_file_reader import MazeFileReader
 from search_algorithms import bfs_path, dfs_path, dls_path, a_star_path, greedy_best_first_search
 from heuristics import euclidean_distance, manhattan_distance
 
 MENU_DIVIDER = "-" * 64
-WALL = 1
-PATH = 0
-START = 2
-END = 3
 
 def print_menu(maze_file_name, chosen_heuristic):
     print(MENU_DIVIDER)
@@ -86,8 +83,8 @@ def main():
         print(f"Maze in '{maze_file_name}' does not specify an ending position.")
     if not start or not end:
         return
-    test_maze[start[0]][start[1]] = 0
-    test_maze[end[0]][end[1]] = 0
+    test_maze[start[0]][start[1]] = PATH
+    test_maze[end[0]][end[1]] = PATH
 
     chosen_heuristic = euclidean_distance  # Default heuristic function
 
