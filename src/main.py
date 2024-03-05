@@ -65,7 +65,7 @@ def run_search_algorithm(algorithm, maze, start, end, chosen_heuristic):
         return None
 
 def main():
-    maze_file_name = "test_maze.txt"
+    maze_file_name = "Prueba_3.txt"
     reader = MazeFileReader(f"./res/{maze_file_name}")
     test_maze = reader.get_maze()
 
