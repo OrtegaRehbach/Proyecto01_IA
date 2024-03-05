@@ -127,7 +127,7 @@ def main():
             elapsed_time = end_time - start_time
             print("Elapsed time:", elapsed_time * 1000, "milliseconds")            
             # print_matrix(test_maze)
-            np_array = np.array(test_maze)
+            np_array = np.array(display_maze)
             plt.matshow(np_array)
             plt.xticks([]) # remove the tick marks by setting to an empty list
             plt.yticks([]) # remove the tick marks by setting to an empty list
