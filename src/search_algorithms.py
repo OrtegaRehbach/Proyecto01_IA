@@ -47,7 +47,9 @@ def dfs_path(maze, start: tuple, end: tuple):
         for direction in directions:
             temp_i = current_node[0] + direction[0]
             temp_j = current_node[1] + direction[1]
-            if (0 <= temp_i < len(maze)) and (0 <= temp_j < len(maze[temp_i])) and maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
+            if temp_i < 0 or temp_i > len(maze) - 1 or temp_j < 0 or temp_j > len(maze[temp_i]) - 1:
+                continue
+            if maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
                 neighbors.append((temp_i, temp_j))
         
         for neighbor in neighbors:
@@ -109,7 +111,9 @@ def a_star_path(maze, start: tuple, end: tuple, heuristic_func=None):
         for direction in directions:
             temp_i = current_node[0] + direction[0]
             temp_j = current_node[1] + direction[1]
-            if (0 <= temp_i < len(maze)) and (0 <= temp_j < len(maze[temp_i])) and maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
+            if temp_i < 0 or temp_i > len(maze) - 1 or temp_j < 0 or temp_j > len(maze[temp_i]) - 1:
+                continue
+            if maze[temp_i][temp_j] != WALL and (temp_i, temp_j) not in visited:
                 neighbors.append((temp_i, temp_j))
         
         for neighbor in neighbors:
