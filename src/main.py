@@ -104,15 +104,25 @@ def main():
         end_time = time.perf_counter()  # Measure end time
         
         if path:
-            print("Path:", path)
+            # Copy original maze
+            display_maze = []
+            for i in range(len(test_maze)):
+                display_maze.append([])
+                for j in range(len(test_maze[i])):
+                    display_maze[i].append(test_maze[i][j])
+            # print("Path:", path)
             print("Path lenght:", len(path))
             print("Iterations:", iterations)
             k = 20
             for step_i, step_j in path:
-                if test_maze[step_i][step_j] == PATH:
-                    test_maze[step_i][step_j] = k
-            test_maze[start[0]][start[1]] = 10
-            test_maze[end[0]][end[1]] = 50
+                if display_maze[step_i][step_j] == PATH:
+                    display_maze[step_i][step_j] = k
+            display_maze[start[0]][start[1]] = 10
+            display_maze[end[0]][end[1]] = 50
+            for i in range(len(display_maze)):
+                for j in range(len(display_maze[i])):
+                    if display_maze[i][j] == WALL:
+                        display_maze[i][j] = 6
             # Calculate and print elapsed time
             elapsed_time = end_time - start_time
             print("Elapsed time:", elapsed_time * 1000, "milliseconds")            
